@@ -1,0 +1,142 @@
+.home {
+  overflow-x: hidden;
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 70px 8% 90px;
+  background: var(--ink);
+  color: var(--ivory);
+}
+
+.hero__text {
+  max-width: 520px;
+}
+
+.hero__eyebrow {
+  color: var(--gold);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  margin-bottom: 18px;
+}
+
+.hero__title {
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  line-height: 1.15;
+  font-weight: 700;
+  margin-bottom: 22px;
+}
+
+.hero__title span {
+  color: var(--gold);
+  font-style: italic;
+}
+
+.hero__subtitle {
+  color: rgba(224, 223, 219, 0.925);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+
+.hero__actions {
+  display: flex;
+  gap: 16px;
+}
+
+.btn {
+  padding: 13px 28px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  transition: all 0.2s ease;
+}
+
+.btn--gold {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.btn--gold:hover {
+  background: var(--gold-soft);
+}
+
+.btn--outline {
+  border: 1px solid rgba(245, 240, 230, 0.4);
+  color: var(--ivory);
+}
+
+.btn--outline:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.hero__image {
+  flex-shrink: 0;
+  width: 480px;
+  max-width: 45vw;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+}
+
+.hero__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 90px 8%;
+  text-align: center;
+}
+
+.about h2 {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  color: var(--ink);
+}
+
+.about p {
+  line-height: 1.8;
+  color: var(--ink-soft);
+}
+
+.footer {
+  background: var(--ink);
+  color: rgba(245, 240, 230, 0.6);
+  text-align: center;
+  padding: 26px;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 50px 6% 60px;
+  }
+  .hero__text {
+    max-width: 100%;
+  }
+  .hero__actions {
+    justify-content: center;
+  }
+  .hero__image {
+    width: 100%;
+    max-width: 100%;
+  }
+  .hero__title {
+    font-size: 2.3rem;
+  }
+}

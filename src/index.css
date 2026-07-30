@@ -1,0 +1,50 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --ink: #1b1b1d;
+  --ink-soft: #2c2c2f;
+  --gold: #c9a227;
+  --gold-soft: #e3c667;
+  --ivory: #f5f0e6;
+  --wine: #4a1942;
+  --grey: #8a8580;
+
+  --font-display: "Playfair Display", serif;
+  --font-body: "Poppins", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--ivory);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
