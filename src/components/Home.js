@@ -1,13 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "./Navbar";
 import heroImage from "../assets/homepage-perfume.png";
+import ProductList from "./productList";
+import Cart from "./Cart";
 import "./Home.css";
 
-function Home() {
+function Home({ addToCart, cartItems = [], setCartItems, isCartOpen, setIsCartOpen }) {
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
     <div className="home">
-      <Navbar />
-
+      {/* Navbar ko cartItems aur setIsCartOpen pass kiya */}
+      <Navbar 
+        searchQuery={searchQuery} 
+        setSearchQuery={setSearchQuery} 
+        cartItems={cartItems}
+        setIsCartOpen={setIsCartOpen}
+      />
+      
       <section className="hero">
         <div className="hero__text">
           <p className="hero__eyebrow">Eau de Parfum Collection</p>
@@ -16,30 +26,21 @@ function Home() {
           </h1>
           <p className="hero__subtitle">
             Long-lasting, luxury fragrances crafted from rare ingredients.
-            Har khushbu ek naya andaz.
           </p>
-          <div className="hero__actions">
-            <button className="btn btn--gold">Shop Now</button>
-            <a href="#about" className="btn btn--outline">
-              Learn More
-            </a>
-          </div>
         </div>
-
         <div className="hero__image">
-          <img src={heroImage} alt="Emma scent & MUSK perfume bottle illustration" />
+          <img src={heroImage} alt="Perfume bottle" />
         </div>
       </section>
 
-      <section id="about" className="about">
-        <h2>About Emma scent &amp; MUSK</h2>
-        <p>
-           Emma scent &amp; MUSK ek premium fragrance brand hai jo apni perfumes
-          finest ingredients se banata hai. Hamara maqsad hai har customer ko
-          uski personality ke mutabiq behtareen khushbu dena — chahe woh
-          sober ho, bold ho, ya romantic.
-        </p>
-      </section>
+      <ProductList searchQuery={searchQuery} addToCart={addToCart} /> 
+
+      <Cart 
+        cartItems={cartItems} 
+        setCartItems={setCartItems} 
+        isOpen={isCartOpen} 
+        setIsOpen={setIsCartOpen} 
+      />
 
       <footer className="footer">
         <p>&copy; {new Date().getFullYear()} Emma scent &amp; MUSK. All rights reserved.</p>

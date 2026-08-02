@@ -1,9 +1,16 @@
+/* 1. Tailwind Directives (Is se Tailwind ki classes activate hoti hain) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 2. Global Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* 3. Luxury Perfume Theme Variables */
 :root {
   --ink: #1b1b1d;
   --ink-soft: #2c2c2f;
