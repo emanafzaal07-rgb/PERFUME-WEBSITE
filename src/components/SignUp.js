@@ -19,11 +19,11 @@ function SignUp() {
        
       <div className="auth__card">
         <Link to="/" className="auth__logo">
-        Emma Scent <span>&amp;</span> MUSK
+        OUD AL <span></span> NOOR
         </Link>
 
         <h1 className="auth__title">Create Account</h1>
-        <p className="auth__subtitle">Naya account banayein, sirf 1 minute me</p>
+        <p className="auth__subtitle">MAKE A NEW ACCOUNT WITHIN A MINIUTE</p>
 
         <form onSubmit={handleSubmit} className="auth__form">
           <label>

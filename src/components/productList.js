@@ -1,64 +1,169 @@
 import React from "react";
-import product1 from "../assets/oud.png"; 
-import product2 from "../assets/janansport.png"; 
-import product3 from "../assets/musk.png"; 
-import product4 from "../assets/versace.png"; 
 
-// Aap ka original Data Array
+// Existing Perfume Imports
+import product1 from "../assets/aurum-noir.png"; 
+import product2 from "../assets/chanel.png"; 
+import product3 from "../assets/honey.png"; 
+import product4 from "../assets/vanila.png"; 
+
+// New Bella Vita Imports (from your assets folder)
+import product5 from "../assets/bella-vita-black.png";
+import product6 from "../assets/bella-vita-blue.png";
+import product7 from "../assets/bella-vita-purple.png";
+import product8 from "../assets/bella-vita-white.png";
+
+// 8 Items Array (4 Top Row + 4 Bottom Row)
 const itemsArray = [ 
   { 
     id: 1, 
-    name: "Oud Supreme", 
+    name: "Aurum Noir", 
     price: 4500,
     image: product1, 
     description: "Long lasting luxury perfume" 
   }, 
   { 
     id: 2, 
-    name: "Janan Sport",
+    name: "Chanel",
     price: 3800,
     image: product2, 
     description: "Fresh and energetic fragrance" 
   }, 
   { 
     id: 3,
-    name: "Royal Musk",
+    name: "Honey",
     price: 5200,
     image: product3,
     description: "Deep, sweet & woody scent" 
   },
   { 
     id: 4,
-    name: "Versace Eros",
+    name: "Vanila",
     price: 9500,
     image: product4,
     description: "Premium fresh aromatic perfume" 
+  },
+  { 
+    id: 5,
+    name: "Bella Vita Noir",
+    price: 4200,
+    image: product5,
+    description: "Intense dark aromatic EDP" 
+  },
+  { 
+    id: 6,
+    name: "Bella Vita Ocean",
+    price: 3900,
+    image: product6,
+    description: "Refreshing aquatic splash fragrance" 
+  },
+  { 
+    id: 7,
+    name: "Bella Vita Luxury",
+    price: 4800,
+    image: product7,
+    description: "Elegant floral & fruity notes" 
+  },
+  { 
+    id: 8,
+    name: "Bella Vita White",
+    price: 4100,
+    image: product8,
+    description: "Pure subtle royal musk scent" 
   }
 ]; 
 
-// 1. Function mein searchQuery aur addToCart receive kiya
 function ProductList({ searchQuery, addToCart }) {
 
-  // 2. Search query ke mutabiq filter
+  // Search filter implementation
   const filteredProducts = itemsArray.filter((product) =>
     product.name.toLowerCase().includes((searchQuery || "").toLowerCase())
   );
 
   return (
-    <div style={{ padding: "40px 20px" }}>
+    <div style={{ padding: "40px 20px", maxWidth: "1280px", margin: "0 auto" }}>
       {filteredProducts.length > 0 ? (
-        <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
+        /* CSS Grid: Exact 4 Columns per Row with proper gap */
+        <div 
+          style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", 
+            gap: "24px", 
+            justifyContent: "center" 
+          }}
+        >
           {filteredProducts.map((product) => (
-            <div key={product.id} style={{ border: "1px solid #eee", padding: "15px", borderRadius: "10px", width: "220px", textAlign: "center" }}>
-              <img src={product.image} alt={product.name} style={{ width: "100%", height: "180px", objectFit: "contain" }} />
-              <h3>{product.name}</h3>
-              <p style={{ color: "#666", fontSize: "14px" }}>{product.description}</p>
-              <strong style={{ color: "#b89433" }}>Rs. {product.price}</strong>
-              
-              {/* Button par onClick handler lagaya hai */}
+            <div 
+              key={product.id} 
+              style={{ 
+                backgroundColor: "#ffffff", 
+                borderRadius: "12px", 
+                padding: "20px 16px", 
+                textAlign: "center",
+                boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                alignItems: "center",
+                transition: "transform 0.2s ease-in-out"
+              }}
+            >
+              {/* Image Container */}
+              <div style={{ width: "100%", height: "200px", marginBottom: "12px", overflow: "hidden", borderRadius: "6px" }}>
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+                />
+              </div>
+
+              {/* Text Details */}
+              <div style={{ width: "100%", flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <h3 style={{ 
+                  fontFamily: "'Playfair Display', serif", 
+                  fontSize: "18px", 
+                  color: "#1a1a1a", 
+                  margin: "6px 0 4px 0",
+                  fontWeight: "600"
+                }}>
+                  {product.name}
+                </h3>
+
+                <p style={{ 
+                  color: "#777777", 
+                  fontSize: "13px", 
+                  margin: "0 0 8px 0", 
+                  fontStyle: "italic",
+                  lineHeight: "1.4"
+                }}>
+                  {product.description}
+                </p>
+
+                <strong style={{ 
+                  color: "#c5a059", 
+                  fontSize: "15px", 
+                  fontFamily: "serif",
+                  display: "block",
+                  marginBottom: "14px"
+                }}>
+                  Rs. {product.price}
+                </strong>
+              </div>
+
+              {/* Add to Cart Button */}
               <button 
                 onClick={() => addToCart && addToCart(product)}
-                style={{ marginTop: "10px", width: "100%", backgroundColor: "#111", color: "#fff", padding: "8px", border: "none", borderRadius: "5px", cursor: "pointer" }}
+                style={{ 
+                  width: "100%", 
+                  backgroundColor: "#0d0d0d", 
+                  color: "#ffffff", 
+                  padding: "10px", 
+                  border: "none", 
+                  borderRadius: "6px", 
+                  cursor: "pointer",
+                  fontWeight: "500",
+                  fontSize: "14px",
+                  letterSpacing: "0.5px"
+                }}
               >
                 Add to Cart
               </button>

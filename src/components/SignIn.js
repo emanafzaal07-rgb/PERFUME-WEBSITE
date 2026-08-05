@@ -17,11 +17,11 @@ function SignIn() {
     <div className="auth">
       <div className="auth__card">
         <Link to="/" className="auth__logo">
-          Emma Scent <span>&amp;</span> MUSK
+         OUD AL <span></span> NOOR
         </Link>
 
         <h1 className="auth__title">Welcome Back</h1>
-        <p className="auth__subtitle">Apne account me sign in karein</p>
+        <p className="auth__subtitle">SIGN IN TO YOUR ACCOUNT</p>
 
         <form onSubmit={handleSubmit} className="auth__form">
           <label>
@@ -52,7 +52,7 @@ function SignIn() {
         </form>
 
         <p className="auth__switch">
-          Naya account banana hai?{" "}
+          WANT TO MAKE NEW ACCOUNT?{" "}
           <Link to="/signup">Sign Up</Link>
         </p>
 

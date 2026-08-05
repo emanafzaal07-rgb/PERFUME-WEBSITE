@@ -1,142 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+:root {
+  --gold: #d4af37;
+  --gold-soft: #c5a059;
+}
+
 .home {
   overflow-x: hidden;
+  font-family: 'Playfair Display', serif;
 }
 
-.hero {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 40px;
-  padding: 70px 8% 90px;
-  background: var(--ink);
-  color: var(--ivory);
+/* Deep Black Background + Golden Marble Cracks / Veins Pattern */
+.hero-gold-cracks {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.55;
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'%3E%3Cg stroke='%23d4af37' stroke-width='1.5' fill='none' opacity='0.85'%3E%3Cpath d='M100,-50 C250,150 150,300 350,450 C450,520 380,680 500,850' /%3E%3Cpath d='M350,450 C500,380 620,500 750,420 C880,350 950,550 1250,600' stroke-width='1.8' /%3E%3Cpath d='M650,-20 C750,180 820,120 950,300 C1050,450 1100,250 1220,400' stroke-width='1.2' opacity='0.7' /%3E%3Cpath d='M150,200 Q280,280 320,150' stroke-width='0.8' opacity='0.6' /%3E%3Cpath d='M750,420 Q880,520 980,480' stroke-width='1' opacity='0.6' /%3E%3Cpath d='M0,500 C180,480 250,620 400,750' stroke-width='1' opacity='0.5' /%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
 }
 
-.hero__text {
+/* Main Hero Heading */
+.hero-heading {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Luxury Cursive Font for Spray Word */
+.spray-font {
+  font-family: 'Alex Brush', cursive;
+  color: var(--gold);
+  font-weight: 400;
+}
+
+/* Seamless Image Container for Model Pic */
+.hero-image-box {
+  position: relative;
+  width: 100%;
   max-width: 520px;
-}
-
-.hero__eyebrow {
-  color: var(--gold);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  margin-bottom: 18px;
-}
-
-.hero__title {
-  font-family: var(--font-display);
-  font-size: 3.2rem;
-  line-height: 1.15;
-  font-weight: 700;
-  margin-bottom: 22px;
-}
-
-.hero__title span {
-  color: var(--gold);
-  font-style: italic;
-}
-
-.hero__subtitle {
-  color: rgba(224, 223, 219, 0.925);
-  font-size: 1rem;
-  line-height: 1.7;
-  margin-bottom: 32px;
-}
-
-.hero__actions {
-  display: flex;
-  gap: 16px;
-}
-
-.btn {
-  padding: 13px 28px;
-  border-radius: 999px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  display: inline-block;
-  transition: all 0.2s ease;
-}
-
-.btn--gold {
-  background: var(--gold);
-  color: var(--ink);
-}
-
-.btn--gold:hover {
-  background: var(--gold-soft);
-}
-
-.btn--outline {
-  border: 1px solid rgba(245, 240, 230, 0.4);
-  color: var(--ivory);
-}
-
-.btn--outline:hover {
-  border-color: var(--gold);
-  color: var(--gold);
-}
-
-.hero__image {
-  flex-shrink: 0;
-  width: 480px;
-  max-width: 45vw;
-  border-radius: 24px;
+  height: 440px;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
-.hero__image img {
+.hero-image-box img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top center;
 }
 
-.about {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 90px 8%;
-  text-align: center;
+/* Gradient Mask to Blend Image with Hero Background */
+.hero-image-box::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 35%, rgba(18, 19, 22, 0.6) 100%),
+              linear-gradient(to top, rgba(18, 19, 22, 0.8) 0%, transparent 20%);
+  pointer-events: none;
 }
 
-.about h2 {
-  font-family: var(--font-display);
-  font-size: 2.2rem;
-  margin-bottom: 20px;
-  color: var(--ink);
+/* Lower Section Light Marble Texture */
+.product-section-marble {
+  background-color: #ede2cd;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.5), rgba(220, 208, 185, 0.6)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cpath d='M0,150 Q300,50 600,150 M0,450 Q300,550 600,450' fill='none' stroke='%23b89e6e' stroke-width='0.4' opacity='0.3' /%3E%3C/svg%3E");
+  background-size: cover;
 }
 
-.about p {
-  line-height: 1.8;
-  color: var(--ink-soft);
-}
-
-.footer {
-  background: var(--ink);
-  color: rgba(245, 240, 230, 0.6);
-  text-align: center;
-  padding: 26px;
-  font-size: 0.85rem;
-}
-
-@media (max-width: 900px) {
-  .hero {
-    flex-direction: column;
-    text-align: center;
-    padding: 50px 6% 60px;
-  }
-  .hero__text {
-    max-width: 100%;
-  }
-  .hero__actions {
-    justify-content: center;
-  }
-  .hero__image {
-    width: 100%;
-    max-width: 100%;
-  }
-  .hero__title {
-    font-size: 2.3rem;
-  }
+/* Intersecting Diamond Lattice behind products */
+.gold-lattice-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M0 40 L40 0 L80 40 L40 80 Z' fill='none' stroke='%23c5a059' stroke-width='0.6' opacity='0.35' /%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-position: center center;
 }
