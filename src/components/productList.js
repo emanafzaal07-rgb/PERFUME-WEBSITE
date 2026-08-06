@@ -79,7 +79,7 @@ function ProductList({ searchQuery, addToCart }) {
   // 👇 YAHAN YEH EFFECT CODE LAGAYA HAI JO BACKEND DATA KO CHECK KAREGA 👇
   // -------------------------------------------------------------------
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
+    fetch("https://perfume-backend-jade.vercel.app/api/products")
       .then((res) => res.json())
       .then((data) => {
         console.log("Backend Response:", data);

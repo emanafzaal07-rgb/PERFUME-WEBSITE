@@ -14,8 +14,7 @@ function SignIn() {
 
     try {
       // Backend ke /api/auth/login endpoint par request bhej rahe hain
-      const response = await fetch("http://https://perfume-backend-jade.vercel.app](https://perfume-backend-jade.vercel.app/api/auth/login", {
-        method: "POST",
+      const response = await fetch("https://perfume-backend-jade.vercel.app/api/auth/login", {
         headers: {
           "Content-Type": "application/json",
         },

@@ -15,7 +15,7 @@ function SignUp() {
 
     try {
       // Backend ke /api/auth/signup endpoint par request
-      const response = await fetch("http://https://perfume-backend-jade.vercel.app](https://perfume-backend-jade.vercel.app/api/auth/signup", {
+      const response = await fetch("https://perfume-backend-jade.vercel.app/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
