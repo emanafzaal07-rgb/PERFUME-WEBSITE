@@ -1,23 +1,50 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
 
 function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Abhi ke liye sirf console pe values dikha rahe hain
-    // Baad me yahan par apna login API call add kar sakte hain
-    console.log("Sign in with:", email, password);
+    setLoading(true);
+
+    try {
+      // Backend ke /api/auth/login endpoint par request bhej rahe hain
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // User data aur token local storage mein save karein
+        localStorage.setItem("userInfo", JSON.stringify(data));
+        alert("Login Successful!");
+        navigate("/"); // Home page par Redirect
+      } else {
+        alert(data.message || "Invalid Email or Password");
+      }
+    } catch (error) {
+      console.error("Login Error:", error);
+      alert("Server connect nahi ho raha, backend Terminal check karein!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="auth">
       <div className="auth__card">
         <Link to="/" className="auth__logo">
-         OUD AL <span></span> NOOR
+          OUD AL <span></span> NOOR
         </Link>
 
         <h1 className="auth__title">Welcome Back</h1>
@@ -46,8 +73,8 @@ function SignIn() {
             />
           </label>
 
-          <button type="submit" className="auth__submit">
-            Sign In
+          <button type="submit" className="auth__submit" disabled={loading}>
+            {loading ? "Signing In..." : "Sign In"}
           </button>
         </form>
 

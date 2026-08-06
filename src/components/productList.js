@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 // Existing Perfume Imports
 import product1 from "../assets/aurum-noir.png"; 
@@ -6,14 +6,14 @@ import product2 from "../assets/chanel.png";
 import product3 from "../assets/honey.png"; 
 import product4 from "../assets/vanila.png"; 
 
-// New Bella Vita Imports (from your assets folder)
+// New Bella Vita Imports
 import product5 from "../assets/bella-vita-black.png";
 import product6 from "../assets/bella-vita-blue.png";
 import product7 from "../assets/bella-vita-purple.png";
 import product8 from "../assets/bella-vita-white.png";
 
-// 8 Items Array (4 Top Row + 4 Bottom Row)
-const itemsArray = [ 
+// Aap ka exact 8 Items ka Local Array
+const localItemsArray = [ 
   { 
     id: 1, 
     name: "Aurum Noir", 
@@ -73,9 +73,26 @@ const itemsArray = [
 ]; 
 
 function ProductList({ searchQuery, addToCart }) {
+  const [products, setProducts] = useState(localItemsArray);
+
+  // -------------------------------------------------------------------
+  // 👇 YAHAN YEH EFFECT CODE LAGAYA HAI JO BACKEND DATA KO CHECK KAREGA 👇
+  // -------------------------------------------------------------------
+  useEffect(() => {
+    fetch("http://localhost:5000/api/products")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Backend Response:", data);
+        const backendProducts = Array.isArray(data) ? data : (data.products || []);
+        if (backendProducts.length > 0) {
+          setProducts([...backendProducts, ...localItemsArray]);
+        }
+      })
+      .catch((err) => console.error("Backend Connection Error:", err));
+  }, []);
 
   // Search filter implementation
-  const filteredProducts = itemsArray.filter((product) =>
+  const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes((searchQuery || "").toLowerCase())
   );
 
@@ -91,9 +108,9 @@ function ProductList({ searchQuery, addToCart }) {
             justifyContent: "center" 
           }}
         >
-          {filteredProducts.map((product) => (
+          {filteredProducts.map((product, index) => (
             <div 
-              key={product.id} 
+              key={product._id || product.id || index} 
               style={{ 
                 backgroundColor: "#ffffff", 
                 borderRadius: "12px", 

@@ -1,36 +1,60 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
 
 function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Abhi ke liye sirf console pe values dikha rahe hain
-    // Baad me yahan par apna register API call add kar sakte hain
-    console.log("Sign up with:", name, email, password);
+    setLoading(true);
+
+    try {
+      // Backend ke /api/auth/signup endpoint par request
+      const response = await fetch("http://localhost:5000/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Account Successfully Ban Gaya!");
+        navigate("/signin");
+      } else {
+        alert(data.message || "Registration fail ho gayi");
+      }
+    } catch (error) {
+      console.error("SignUp Error:", error);
+      alert("Server connect nahi ho raha, backend check karein!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="auth">
-       
       <div className="auth__card">
         <Link to="/" className="auth__logo">
-        OUD AL <span></span> NOOR
+          OUD AL <span></span> NOOR
         </Link>
 
         <h1 className="auth__title">Create Account</h1>
-        <p className="auth__subtitle">MAKE A NEW ACCOUNT WITHIN A MINIUTE</p>
+        <p className="auth__subtitle">JOIN US FOR A LUXURY EXPERIENCE</p>
 
         <form onSubmit={handleSubmit} className="auth__form">
           <label>
             Full Name
             <input
               type="text"
-              placeholder="Your name"
+              placeholder="John Doe"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -59,13 +83,13 @@ function SignUp() {
             />
           </label>
 
-          <button type="submit" className="auth__submit">
-            Sign Up
+          <button type="submit" className="auth__submit" disabled={loading}>
+            {loading ? "Creating Account..." : "Sign Up"}
           </button>
         </form>
 
         <p className="auth__switch">
-          Pehle se account hai?{" "}
+          ALREADY HAVE AN ACCOUNT?{" "}
           <Link to="/signin">Sign In</Link>
         </p>
 

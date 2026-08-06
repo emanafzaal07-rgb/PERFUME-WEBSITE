@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
 export default function Navbar({
@@ -8,7 +8,29 @@ export default function Navbar({
   cartItems = [],
   setIsCartOpen,
 }) {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
   const totalCount = cartItems.reduce((acc, item) => acc + (item.quantity || 1), 0);
+
+  useEffect(() => {
+    // LocalStorage se logged-in user check karein
+    const userInfo = localStorage.getItem("userInfo");
+    if (userInfo) {
+      try {
+        setUser(JSON.parse(userInfo));
+      } catch (error) {
+        console.error("Error parsing user info:", error);
+      }
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    setUser(null);
+    alert("Logged Out Successfully!");
+    navigate("/signin");
+  };
 
   return (
     <nav className="navbar flex items-center justify-between px-10 py-5 bg-[#17181a] border-b border-[#2d2820]/60 text-[#d8cebe]">
@@ -67,21 +89,36 @@ export default function Navbar({
           Contact
         </Link>
 
-        {/* --- ADDED SIGN IN LINK --- */}
-        <Link
-          to="/signin"
-          className="text-[#d8cebe] hover:text-[#d4af37] text-xs font-serif tracking-widest uppercase transition"
-        >
-          Sign In
-        </Link>
+        {/* --- DYNAMIC USER / SIGN IN SECTION --- */}
+        {user ? (
+          <div className="flex items-center gap-3">
+            <span className="text-[#d4af37] text-xs font-serif tracking-widest uppercase font-semibold">
+              Hi, {user.name || "User"}
+            </span>
+            <button
+              onClick={handleLogout}
+              className="text-[#e0d6c3] hover:text-[#d4af37] border border-[#8c7443]/60 hover:border-[#d4af37] px-3 py-1 rounded-full text-xs font-serif tracking-widest uppercase transition"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <>
+            <Link
+              to="/signin"
+              className="text-[#d8cebe] hover:text-[#d4af37] text-xs font-serif tracking-widest uppercase transition"
+            >
+              Sign In
+            </Link>
 
-        {/* --- ADDED SIGN UP BUTTON --- */}
-        <Link
-          to="/signup"
-          className="text-[#121315] bg-[#d4af37] hover:bg-[#c5a059] px-3.5 py-1.5 rounded-full text-xs font-serif tracking-widest uppercase transition font-semibold"
-        >
-          Sign Up
-        </Link>
+            <Link
+              to="/signup"
+              className="text-[#121315] bg-[#d4af37] hover:bg-[#c5a059] px-3.5 py-1.5 rounded-full text-xs font-serif tracking-widest uppercase transition font-semibold"
+            >
+              Sign Up
+            </Link>
+          </>
+        )}
 
         {/* Cart Button */}
         <button
