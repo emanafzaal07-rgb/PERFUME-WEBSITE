@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
+import { auth } from "../firebase";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 function SignUp() {
   const [name, setName] = useState("");
@@ -14,26 +16,27 @@ function SignUp() {
     setLoading(true);
 
     try {
-      // Backend ke /api/auth/signup endpoint par request
-      const response = await fetch("https://perfume-backend-jade.vercel.app/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email, password }),
+      // 1. Firebase Authentication se user create karein
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // 2. User ka Profile Name set karein
+      await updateProfile(userCredential.user, {
+        displayName: name,
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        alert("Account Successfully Ban Gaya!");
-        navigate("/signin");
-      } else {
-        alert(data.message || "Registration fail ho gayi");
-      }
+      alert("Account Created Successfully!");
+      navigate("/signin");
     } catch (error) {
       console.error("SignUp Error:", error);
-      alert("Server connect nahi ho raha, backend check karein!");
+      
+      // Friendly Error Messages
+      if (error.code === "auth/email-already-in-use") {
+        alert("This email is alredy registered!");
+      } else if (error.code === "auth/weak-password") {
+        alert("Password should be off 6 characters!");
+      } else {
+        alert(error.message || "Registration failed!");
+      }
     } finally {
       setLoading(false);
     }
@@ -54,7 +57,7 @@ function SignUp() {
             Full Name
             <input
               type="text"
-              placeholder="John Doe"
+              placeholder="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -65,7 +68,7 @@ function SignUp() {
             Email
             <input
               type="email"
-              placeholder="you@example.com"
+              placeholder="you@mail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

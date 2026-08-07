@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -32,7 +33,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0c] p-4 sm:p-8 flex items-center justify-center font-sans">
-      {/* Container Card (Same Dark Card Style as Sign In / Create Account) */}
+      {/* Container Card */}
       <div className="w-full max-w-5xl bg-[#1e2024] rounded-3xl shadow-2xl border border-[#2e3238] overflow-hidden text-[#e0d6c3]">
         <div className="grid grid-cols-1 lg:grid-cols-2 p-8 sm:p-14 gap-12 items-center">
           
@@ -173,7 +174,7 @@ export default function Contact() {
                 />
               </div>
 
-              {/* Checkbox */}
+              {/* Checkbox with Working Privacy Policy Link */}
               <div className="flex items-center gap-2 pt-1">
                 <input
                   type="checkbox"
@@ -186,13 +187,13 @@ export default function Contact() {
                 />
                 <label htmlFor="agreed" className="text-xs text-[#a09788]">
                   By selecting this, you agree to our{' '}
-                  <a href="#" className="font-medium text-[#d4af37] underline">
+                  <Link to="/privacy-policy" className="font-medium text-[#d4af37] underline hover:text-[#c5a059]">
                     privacy policy
-                  </a>.
+                  </Link>.
                 </label>
               </div>
 
-              {/* Submit Button (Matching Gold Button from Sign In) */}
+              {/* Submit Button */}
               <button
                 type="submit"
                 className="w-full mt-2 rounded-lg bg-[#d4af37] px-6 py-3.5 text-center text-sm font-semibold text-black shadow-lg transition duration-300 hover:bg-[#c5a059] hover:scale-[1.01] focus:outline-none"
@@ -200,6 +201,16 @@ export default function Contact() {
                 Submit
               </button>
             </form>
+
+            {/* Back to Home Link (Same as SignIn page) */}
+            <div className="text-center mt-6">
+              <Link 
+                to="/" 
+                className="text-sm text-[#a09788] hover:text-[#d4af37] transition-colors duration-200 inline-block"
+              >
+                ← Back to Home
+              </Link>
+            </div>
           </div>
 
         </div>

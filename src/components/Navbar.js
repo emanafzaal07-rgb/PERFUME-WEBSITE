@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./Navbar.css";
+import { auth } from "../firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 export default function Navbar({
   searchQuery = "",
@@ -9,28 +11,27 @@ export default function Navbar({
   setIsCartOpen,
 }) {
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
 
-  const totalCount = cartItems.reduce((acc, item) => acc + (item.quantity || 1), 0);
-
+  // Firebase auth state listen karein
   useEffect(() => {
-    // LocalStorage se logged-in user check karein
-    const userInfo = localStorage.getItem("userInfo");
-    if (userInfo) {
-      try {
-        setUser(JSON.parse(userInfo));
-      } catch (error) {
-        console.error("Error parsing user info:", error);
-      }
-    }
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("userInfo");
-    setUser(null);
-    alert("Logged Out Successfully!");
-    navigate("/signin");
+  // Logout handler
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      localStorage.removeItem("userInfo");
+      alert("Logged out successfully!");
+    } catch (error) {
+      console.error("Logout Error:", error);
+    }
   };
+
+  const totalCount = cartItems.reduce((acc, item) => acc + (item.quantity || 1), 0);
 
   return (
     <nav className="navbar flex items-center justify-between px-10 py-5 bg-[#17181a] border-b border-[#2d2820]/60 text-[#d8cebe]">
@@ -68,7 +69,7 @@ export default function Navbar({
         </div>
       </div>
 
-      {/* Navigation Links & Cart */}
+      {/* Navigation Links & Dynamic Auth Buttons */}
       <div className="flex items-center gap-6 shrink-0">
         <Link
           to="/"
@@ -89,15 +90,15 @@ export default function Navbar({
           Contact
         </Link>
 
-        {/* --- DYNAMIC USER / SIGN IN SECTION --- */}
+        {/* --- DYNAMIC AUTH BUTTONS --- */}
         {user ? (
           <div className="flex items-center gap-3">
             <span className="text-[#d4af37] text-xs font-serif tracking-widest uppercase font-semibold">
-              Hi, {user.name || "User"}
+              HI, {user.displayName || user.email?.split("@")[0]}
             </span>
             <button
               onClick={handleLogout}
-              className="text-[#e0d6c3] hover:text-[#d4af37] border border-[#8c7443]/60 hover:border-[#d4af37] px-3 py-1 rounded-full text-xs font-serif tracking-widest uppercase transition"
+              className="border border-[#8c7443]/60 text-[#d8cebe] hover:text-[#d4af37] hover:border-[#d4af37] px-3 py-1 rounded-full text-xs font-serif tracking-widest uppercase transition"
             >
               Logout
             </button>
@@ -110,7 +111,6 @@ export default function Navbar({
             >
               Sign In
             </Link>
-
             <Link
               to="/signup"
               className="text-[#121315] bg-[#d4af37] hover:bg-[#c5a059] px-3.5 py-1.5 rounded-full text-xs font-serif tracking-widest uppercase transition font-semibold"
@@ -125,7 +125,6 @@ export default function Navbar({
           onClick={() => setIsCartOpen && setIsCartOpen(true)}
           className="relative flex items-center gap-2 border border-[#8c7443]/70 bg-[#121315] text-[#d4af37] px-4 py-1.5 rounded-full text-xs font-medium hover:border-[#d4af37] transition ml-2"
         >
-          {/* Cart Icon with badge */}
           <div className="relative">
             <svg
               className="w-4 h-4 text-[#d4af37]"

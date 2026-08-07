@@ -6,6 +6,7 @@ import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import Contact from "./components/Contact";
 import Cart from "./components/Cart";
+import PrivacyPolicy from "./components/PrivacyPolicy"; // 1. Import Added
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -50,6 +51,9 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         
+        {/* 2. Privacy Policy Route Added */}
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+
         <Route 
           path="/cart" 
           element={
