@@ -1,8 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+// Shared Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyAW-Y9XtdA4qPlaerLBOZNvrc4AE_oBckU",
   authDomain: "oud-al-noor.firebaseapp.com",
@@ -15,10 +15,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
-// Services initialize aur export karein
+// Auth aur Firestore Export
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-
-export default app;

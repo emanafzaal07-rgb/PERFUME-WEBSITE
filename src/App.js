@@ -6,7 +6,8 @@ import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import Contact from "./components/Contact";
 import Cart from "./components/Cart";
-import PrivacyPolicy from "./components/PrivacyPolicy"; // 1. Import Added
+import PrivacyPolicy from "./components/PrivacyPolicy";
+import AdminOrders from "./components/AdminOrders";
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -15,17 +16,12 @@ function App() {
 
   const addToCart = (product) => {
     setCartItems((prevItems) => [...prevItems, product]);
-    
-    // Sleek & Chota Notification Msg
     setToastMessage(`✓ Added ${product.name}`);
-    setTimeout(() => {
-      setToastMessage(""); 
-    }, 2500);
+    setTimeout(() => setToastMessage(""), 2500);
   };
 
   return (
     <BrowserRouter>
-      {/* --- SLEEK CHOTA TOAST (Top Right) --- */}
       {toastMessage && (
         <div className="fixed top-4 right-4 z-50 bg-black/90 text-white text-xs px-3 py-2 rounded-md shadow-lg flex items-center gap-1.5 transition-all">
           <span className="text-green-400 font-bold">✓</span>
@@ -46,14 +42,12 @@ function App() {
             />
           } 
         />
+        <Route path="/admin" element={<AdminOrders />} />
         <Route path="/products" element={<ProductList addToCart={addToCart} />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-        
-        {/* 2. Privacy Policy Route Added */}
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-
         <Route 
           path="/cart" 
           element={
@@ -65,7 +59,6 @@ function App() {
             />
           } 
         />          
-        
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

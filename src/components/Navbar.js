@@ -90,6 +90,14 @@ export default function Navbar({
           Contact
         </Link>
 
+        {/* --- ADMIN BUTTON --- */}
+        <Link
+          to="/admin"
+          className="border border-[#d4af37]/60 text-[#d4af37] hover:bg-[#d4af37] hover:text-[#121315] px-3 py-1 rounded-full text-xs font-serif tracking-widest uppercase transition font-semibold"
+        >
+          Admin
+        </Link>
+
         {/* --- DYNAMIC AUTH BUTTONS --- */}
         {user ? (
           <div className="flex items-center gap-3">

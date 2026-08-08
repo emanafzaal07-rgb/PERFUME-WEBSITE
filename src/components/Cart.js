@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
+import { db } from '../firebase'; // Fixed import path
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export default function Cart({ cartItems = [], setCartItems, isOpen = false, setIsOpen }) {
   /* --- STATES & HANDLERS --- */
   const [step, setStep] = useState('cart'); // 'cart' | 'checkout' | 'success'
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ name: '', phone: '', city: '', address: '' });
 
   const subtotal = cartItems.reduce((total, item) => total + (Number(item.price) || 0), 0);
@@ -16,14 +19,34 @@ export default function Cart({ cartItems = [], setCartItems, isOpen = false, set
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handlePlaceOrder = (e) => {
+  // Order Placement Function (Firebase Firestore Integration)
+  const handlePlaceOrder = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.phone || !formData.address || !formData.city) {
-      alert('Disclaimer: Please fill in all the required details!');
+      alert('Please fill in all the required details!');
       return;
     }
-    setStep('success');
-    if (setCartItems) setCartItems([]);
+
+    try {
+      setLoading(true);
+
+      // Firestore ke 'orders' collection mein record create karna
+      await addDoc(collection(db, 'orders'), {
+        customerInfo: formData,
+        items: cartItems,
+        totalAmount: subtotal,
+        status: 'Pending',
+        createdAt: serverTimestamp()
+      });
+
+      setStep('success');
+      if (setCartItems) setCartItems([]);
+    } catch (error) {
+      console.error('Order Submission Error:', error);
+      alert('Order place karne mein masla aaya. Re-try karein!');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleClose = () => {
@@ -234,9 +257,10 @@ export default function Cart({ cartItems = [], setCartItems, isOpen = false, set
                     <button 
                       type="submit" 
                       form="checkout-form" 
-                      className="w-full flex items-center justify-center rounded-lg bg-[#d4af37] px-6 py-3.5 text-sm font-semibold text-black shadow-lg hover:bg-[#c5a059] transition-all duration-300"
+                      disabled={loading}
+                      className="w-full flex items-center justify-center rounded-lg bg-[#d4af37] px-6 py-3.5 text-sm font-semibold text-black shadow-lg hover:bg-[#c5a059] transition-all duration-300 disabled:opacity-50"
                     >
-                      Confirm Order (Rs. {subtotal})
+                      {loading ? 'Placing Order...' : `Confirm Order (Rs. ${subtotal})`}
                     </button>
                   )}
 

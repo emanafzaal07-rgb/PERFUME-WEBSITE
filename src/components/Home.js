@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
-import heroImage from "../assets/homepage-perfume.png"; // Aap ki current multi-bottle image
+import heroImage from "../assets/homepage-perfume.png";
 import ProductList from "./productList";
 import Cart from "./Cart";
 import "./Home.css";
@@ -15,7 +15,7 @@ function Home({
 }) {
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Browser tab title dynamically update karne ke liye
+  // Tab Title Update
   useEffect(() => {
     document.title = "OUD AL NOOR | Luxury Fragrances & Perfumes";
   }, []);
@@ -89,7 +89,7 @@ function Home({
 
           </div>
 
-          {/* Right Image (Badi image bina kisi box/frame ke) */}
+          {/* Right Hero Image */}
           <div className="lg:col-span-6 flex justify-center lg:justify-end">
             <div className="hero-image-wrapper w-full max-w-xl">
               <img
