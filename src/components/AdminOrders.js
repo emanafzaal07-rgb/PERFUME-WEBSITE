@@ -3,10 +3,10 @@ import { db, auth } from '../firebase';
 import { collection, onSnapshot, query, orderBy, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
-// 👑 Step 1: Main Admin Emails (Aap aur Aap ki Dost ka Email)
+// 👑 Allowed Admin Emails (Aap aur Aap ki Dost ka Email)
 const HARDCODED_ADMINS = [
-  "aap-ka-email@gmail.com",
-  "dost-ka-email@gmail.com"
+  "39653@iqraisb.edu.pk",
+  "emanafzaal07@gmail.com"
 ];
 
 export default function AdminOrders() {
@@ -21,7 +21,7 @@ export default function AdminOrders() {
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
-  // 🔍 Check Admin Status (Hardcoded + Firestore Database)
+  // Admin Access Check
   const verifyAdminStatus = async (currentUser) => {
     if (!currentUser || !currentUser.email) {
       setIsAdmin(false);
@@ -38,7 +38,7 @@ export default function AdminOrders() {
       return;
     }
 
-    // 2. Check Firebase Firestore 'admins' Collection (Dynamic Access)
+    // 2. Check Firebase Firestore 'admins' Collection
     try {
       const adminDocRef = doc(db, 'admins', userEmail);
       const adminDocSnap = await getDoc(adminDocRef);
@@ -56,7 +56,7 @@ export default function AdminOrders() {
     setCheckingAuth(false);
   };
 
-  // Auth State Listener
+  // Auth Listener
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -94,7 +94,7 @@ export default function AdminOrders() {
     }
   };
 
-  // Status Change
+  // Status Change Handler
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       const orderRef = doc(db, 'orders', orderId);
@@ -112,7 +112,7 @@ export default function AdminOrders() {
     );
   }
 
-  // 🔒 Admin Login Form (Agar Logged-in Banda Admin Nahi Hai)
+  // 🔒 Admin Login Form (Agar user Admin nahi hai)
   if (!user || !isAdmin) {
     return (
       <div className="min-h-screen bg-[#121416] text-white flex flex-col items-center justify-center p-6">
@@ -123,7 +123,7 @@ export default function AdminOrders() {
 
           {user && !isAdmin && (
             <div className="bg-red-500/10 border border-red-500/40 text-red-400 text-xs p-3 rounded-lg">
-              Aap ka account (`{user.email}`) Admin nahi hai.
+              Aap ka account (`{user.email}`) Admin list mein add nahi hai.
             </div>
           )}
 
@@ -169,9 +169,9 @@ export default function AdminOrders() {
           {user && (
             <button 
               onClick={() => signOut(auth)}
-              className="text-xs text-[#a09788] hover:text-[#d4af37] underline transition pt-2"
+              className="text-xs text-[#a09788] hover:text-[#d4af37] underline transition pt-2 block mx-auto"
             >
-              Sign Out ({user.email})
+              Sign Out (`{user.email}`)
             </button>
           )}
         </div>
