@@ -102,6 +102,12 @@ function SignIn() {
               required
             />
           </label>
+          <div className="flex justify-between items-center mb-1">
+  <label className="text-xs text-[#d4af37] font-serif uppercase tracking-widest">Password</label>
+  <Link to="/forgot-password" className="text-[11px] text-[#a09788] hover:text-[#d4af37] transition">
+    Forgot Password?
+  </Link>
+</div>
 
           <button type="submit" className="auth__submit" disabled={loading}>
             {loading ? "Signing In..." : "Sign In"}

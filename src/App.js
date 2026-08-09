@@ -8,7 +8,7 @@ import Contact from "./components/Contact";
 import Cart from "./components/Cart";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import AdminOrders from "./components/AdminOrders";
-
+import ForgotPassword from "./components/ForgotPassword";
 function App() {
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -42,6 +42,7 @@ function App() {
             />
           } 
         />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/admin" element={<AdminOrders />} />
         <Route path="/products" element={<ProductList addToCart={addToCart} />} />
         <Route path="/contact" element={<Contact />} />
