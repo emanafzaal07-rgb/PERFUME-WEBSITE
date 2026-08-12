@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { db } from "../firebase";
+import { collection, onSnapshot } from "firebase/firestore";
 
 // Existing Perfume Imports
 import product1 from "../assets/aurum-noir.png"; 
@@ -12,7 +14,7 @@ import product6 from "../assets/bella-vita-blue.png";
 import product7 from "../assets/bella-vita-purple.png";
 import product8 from "../assets/bella-vita-white.png";
 
-// Aap ka exact 8 Items ka Local Array
+// Exact 8 Items ka Local Array
 const localItemsArray = [ 
   { 
     id: 1, 
@@ -76,30 +78,41 @@ function ProductList({ searchQuery, addToCart }) {
   const [products, setProducts] = useState(localItemsArray);
 
   // -------------------------------------------------------------------
-  // 👇 YAHAN YEH EFFECT CODE LAGAYA HAI JO BACKEND DATA KO CHECK KAREGA 👇
+  // 🔥 Firebase Firestore Dynamic Products Fetch 🔥
   // -------------------------------------------------------------------
   useEffect(() => {
-    fetch("https://perfume-backend-jade.vercel.app/api/products")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Backend Response:", data);
-        const backendProducts = Array.isArray(data) ? data : (data.products || []);
-        if (backendProducts.length > 0) {
-          setProducts([...backendProducts, ...localItemsArray]);
+    const unsubscribe = onSnapshot(
+      collection(db, "products"),
+      (snapshot) => {
+        const firestoreProducts = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        if (firestoreProducts.length > 0) {
+          // Firebase products pehle, local items baad mein
+          setProducts([...firestoreProducts, ...localItemsArray]);
+        } else {
+          setProducts(localItemsArray);
         }
-      })
-      .catch((err) => console.error("Backend Connection Error:", err));
+      },
+      (error) => {
+        console.error("Firebase Fetch Error:", error);
+      }
+    );
+
+    return () => unsubscribe();
   }, []);
 
   // Search filter implementation
   const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes((searchQuery || "").toLowerCase())
+    (product.name || "").toLowerCase().includes((searchQuery || "").toLowerCase())
   );
 
   return (
     <div style={{ padding: "40px 20px", maxWidth: "1280px", margin: "0 auto" }}>
       {filteredProducts.length > 0 ? (
-        /* CSS Grid: Exact 4 Columns per Row with proper gap */
+        /* CSS Grid: Exact Responsive Grid */
         <div 
           style={{ 
             display: "grid", 
@@ -110,7 +123,7 @@ function ProductList({ searchQuery, addToCart }) {
         >
           {filteredProducts.map((product, index) => (
             <div 
-              key={product._id || product.id || index} 
+              key={product.id || index} 
               style={{ 
                 backgroundColor: "#ffffff", 
                 borderRadius: "12px", 

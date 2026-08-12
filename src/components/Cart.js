@@ -1,285 +1,247 @@
-import React, { useState } from 'react';
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
-import { db } from '../firebase'; // Fixed import path
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { db } from "../firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
-export default function Cart({ cartItems = [], setCartItems, isOpen = false, setIsOpen }) {
-  /* --- STATES & HANDLERS --- */
-  const [step, setStep] = useState('cart'); // 'cart' | 'checkout' | 'success'
+export default function Cart({
+  cartItems = [],
+  setCartItems,
+  isOpen = true,
+  setIsOpen,
+}) {
+  const navigate = useNavigate();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [customer, setCustomer] = useState({ name: "", phone: "", address: "" });
+  const [orderPlaced, setOrderPlaced] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({ name: '', phone: '', city: '', address: '' });
 
-  const subtotal = cartItems.reduce((total, item) => total + (Number(item.price) || 0), 0);
+  // 1. Total Price Calculate
+  const subtotal = cartItems.reduce((acc, item) => {
+    const price = typeof item.price === "number" ? item.price : parseFloat(item.price) || 0;
+    return acc + price;
+  }, 0);
 
-  const handleRemove = (id) => {
-    if (setCartItems) setCartItems(cartItems.filter((item) => item.id !== id));
+  // 2. Navigation Handlers (Fixes non-working buttons)
+  const handleClose = () => {
+    if (setIsOpen) setIsOpen(false);
+    navigate("/");
   };
 
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleContinueShopping = () => {
+    if (setIsOpen) setIsOpen(false);
+    navigate("/products");
   };
 
-  // Order Placement Function (Firebase Firestore Integration)
+  // 3. Place Order in Firestore
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone || !formData.address || !formData.city) {
-      alert('Please fill in all the required details!');
+    if (!customer.name || !customer.phone || !customer.address) {
+      alert("Please fill in all details!");
       return;
     }
 
+    setLoading(true);
     try {
-      setLoading(true);
-
-      // Firestore ke 'orders' collection mein record create karna
-      await addDoc(collection(db, 'orders'), {
-        customerInfo: formData,
+      await addDoc(collection(db, "orders"), {
+        customerName: customer.name,
+        phone: customer.phone,
+        address: customer.address,
         items: cartItems,
-        totalAmount: subtotal,
-        status: 'Pending',
-        createdAt: serverTimestamp()
+        totalPrice: subtotal,
+        status: "Pending",
+        createdAt: serverTimestamp(),
       });
 
-      setStep('success');
       if (setCartItems) setCartItems([]);
-    } catch (error) {
-      console.error('Order Submission Error:', error);
-      alert('Order place karne mein masla aaya. Re-try karein!');
+      setOrderPlaced(true);
+      setIsCheckingOut(false);
+    } catch (err) {
+      console.error("Order placing error:", err);
+      alert("Failed to place order. Try again!");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleClose = () => {
-    if (setIsOpen) setIsOpen(false);
-    setTimeout(() => setStep('cart'), 300);
-  };
+  if (!isOpen) return null;
 
   return (
-    <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
-      <DialogBackdrop className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-500 ease-in-out" />
+    <div className="fixed inset-0 z-50 overflow-hidden bg-black/70 backdrop-blur-sm flex justify-end">
+      {/* Background Overlay */}
+      <div className="absolute inset-0" onClick={handleClose} />
 
-      <div className="fixed inset-0 overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-            <DialogPanel className="pointer-events-auto w-screen max-w-md transform transition duration-500 ease-in-out">
-              <div className="flex h-full flex-col overflow-y-auto bg-[#181a1d] text-[#e0d6c3] border-l border-[#2e3238] shadow-2xl">
-                
-                {/* Header */}
-                <div className="px-4 py-6 sm:px-6 border-b border-[#2e3238] flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {step === 'checkout' && (
-                      <button 
-                        onClick={() => setStep('cart')} 
-                        className="text-[#d4af37] hover:text-[#c5a059] p-1 font-bold text-lg transition-colors"
-                      >
-                        &larr;
-                      </button>
+      <div className="relative w-full max-w-md bg-[#0e0f11] text-[#e0d6c3] border-l border-[#2a261e] h-full shadow-2xl flex flex-col justify-between z-10 p-6 overflow-y-auto">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between pb-4 border-b border-[#2a261e]">
+          <h2 className="text-lg font-serif text-white tracking-wide">
+            Shopping Cart ({cartItems.length})
+          </h2>
+          <button
+            onClick={handleClose}
+            className="w-8 h-8 rounded-full bg-[#1e2024] text-gray-400 hover:text-white flex items-center justify-center transition border border-[#2a261e]"
+            title="Close"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Body Content */}
+        <div className="flex-1 py-6">
+          {orderPlaced ? (
+            /* Order Success Message */
+            <div className="text-center py-12 space-y-4">
+              <div className="text-4xl text-green-400">✓</div>
+              <h3 className="text-xl font-serif text-white">Order Confirmed!</h3>
+              <p className="text-xs text-gray-400">
+                Thank you for your purchase. We will contact you soon for delivery.
+              </p>
+              <button
+                onClick={() => {
+                  setOrderPlaced(false);
+                  handleClose();
+                }}
+                className="mt-4 bg-[#d4af37] text-black text-xs font-semibold uppercase px-6 py-2.5 rounded-full hover:bg-[#c5a059] transition"
+              >
+                Back to Store
+              </button>
+            </div>
+          ) : isCheckingOut ? (
+            /* Shipping Checkout Form */
+            <form onSubmit={handlePlaceOrder} className="space-y-4 text-left">
+              <h3 className="text-sm font-serif text-[#d4af37] uppercase tracking-wider mb-2">
+                Shipping Details
+              </h3>
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">Full Name</label>
+                <input
+                  type="text"
+                  required
+                  value={customer.name}
+                  onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
+                  className="w-full bg-[#16181b] border border-[#2a261e] rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-[#d4af37]"
+                  placeholder="e.g. Ali Khan"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">Phone Number</label>
+                <input
+                  type="tel"
+                  required
+                  value={customer.phone}
+                  onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
+                  className="w-full bg-[#16181b] border border-[#2a261e] rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-[#d4af37]"
+                  placeholder="0300 1234567"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">Delivery Address</label>
+                <textarea
+                  required
+                  rows={3}
+                  value={customer.address}
+                  onChange={(e) => setCustomer({ ...customer, address: e.target.value })}
+                  className="w-full bg-[#16181b] border border-[#2a261e] rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-[#d4af37]"
+                  placeholder="Complete shipping address"
+                />
+              </div>
+
+              <div className="pt-2 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsCheckingOut(false)}
+                  className="w-1/2 border border-[#2a261e] text-xs py-2.5 rounded text-gray-400 hover:text-white"
+                >
+                  Back
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-1/2 bg-[#d4af37] text-black text-xs font-semibold uppercase py-2.5 rounded hover:bg-[#c5a059] transition"
+                >
+                  {loading ? "Placing..." : "Confirm Order"}
+                </button>
+              </div>
+            </form>
+          ) : cartItems.length === 0 ? (
+            /* Empty Cart View */
+            <div className="text-center py-16 space-y-4">
+              <p className="text-xs text-gray-400">Your cart is currently empty.</p>
+              <button
+                onClick={handleContinueShopping}
+                className="text-xs text-[#d4af37] border-b border-[#d4af37] pb-1 uppercase tracking-widest hover:text-[#f3e5ab] transition inline-block font-serif"
+              >
+                CONTINUE SHOPPING →
+              </button>
+            </div>
+          ) : (
+            /* Items List */
+            <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-1">
+              {cartItems.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between bg-[#141619] p-3 rounded-lg border border-[#2a261e]"
+                >
+                  <div className="flex items-center gap-3">
+                    {item.image && (
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-12 h-12 object-cover rounded border border-[#2a261e]"
+                      />
                     )}
-                    <DialogTitle className="text-lg font-serif tracking-wide text-[#ffffff]">
-                      {step === 'cart' && `Shopping Cart (${cartItems.length})`}
-                      {step === 'checkout' && 'Shipping & Payment'}
-                      {step === 'success' && 'Order Confirmed!'}
-                    </DialogTitle>
+                    <div>
+                      <p className="text-xs font-semibold text-white">{item.name}</p>
+                      <p className="text-xs text-[#d4af37]">Rs. {item.price}</p>
+                    </div>
                   </div>
-                  <button 
-                    type="button" 
-                    onClick={handleClose} 
-                    className="p-1 text-[#a09788] hover:text-[#ffffff] font-bold text-xl transition-colors"
+                  <button
+                    onClick={() => {
+                      const updated = cartItems.filter((_, i) => i !== idx);
+                      if (setCartItems) setCartItems(updated);
+                    }}
+                    className="text-xs text-red-400 hover:text-red-300"
                   >
-                    &times;
+                    Remove
                   </button>
                 </div>
-
-                {/* Body Content */}
-                <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-                  
-                  {/* STEP 1: CART LIST */}
-                  {step === 'cart' && (
-                    <div className="flow-root">
-                      {cartItems.length === 0 ? (
-                        <div className="text-center py-16 space-y-4">
-                          <p className="text-[#a09788] text-sm font-light">Your cart is currently empty.</p>
-                          <button 
-                            onClick={handleClose} 
-                            className="text-xs font-serif tracking-widest text-[#d4af37] hover:underline uppercase"
-                          >
-                            Continue Shopping &rarr;
-                          </button>
-                        </div>
-                      ) : (
-                        <ul role="list" className="-my-6 divide-y divide-[#2e3238]">
-                          {cartItems.map((product, index) => (
-                            <li key={index} className="flex py-6">
-                              <div className="h-24 w-24 shrink-0 overflow-hidden rounded-lg border border-[#2e3238] bg-[#22252a]">
-                                <img src={product.image} alt={product.name} className="h-full w-full object-contain p-2" />
-                              </div>
-
-                              <div className="ml-4 flex flex-1 flex-col">
-                                <div>
-                                  <div className="flex justify-between text-base font-serif text-[#ffffff]">
-                                    <h3>{product.name}</h3>
-                                    <p className="ml-4 font-bold text-[#d4af37]">Rs. {product.price}</p>
-                                  </div>
-                                  <p className="mt-1 text-xs text-[#a09788] line-clamp-2">{product.description}</p>
-                                </div>
-                                <div className="flex flex-1 items-end justify-between text-sm">
-                                  <p className="text-[#a09788] text-xs">Qty: 1</p>
-                                  <button 
-                                    type="button" 
-                                    onClick={() => handleRemove(product.id)} 
-                                    className="font-medium text-red-400 hover:text-red-300 text-xs transition-colors"
-                                  >
-                                    Remove
-                                  </button>
-                                </div>
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  )}
-
-                  {/* STEP 2: CHECKOUT FORM */}
-                  {step === 'checkout' && (
-                    <form id="checkout-form" onSubmit={handlePlaceOrder} className="space-y-4">
-                      <div>
-                        <label className="block text-xs font-serif text-[#a09788] uppercase tracking-wider mb-1">Full Name *</label>
-                        <input 
-                          type="text" 
-                          name="name" 
-                          required 
-                          placeholder="e.g. Ali Ahmed" 
-                          value={formData.name} 
-                          onChange={handleInputChange} 
-                          className="w-full rounded-lg border border-[#383d44] bg-[#2b2e34] px-4 py-2.5 text-sm text-[#ffffff] placeholder-[#7d8590] focus:border-[#d4af37] focus:outline-none focus:ring-1 focus:ring-[#d4af37]" 
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-serif text-[#a09788] uppercase tracking-wider mb-1">Phone Number *</label>
-                        <input 
-                          type="tel" 
-                          name="phone" 
-                          required 
-                          placeholder="0300 1234567" 
-                          value={formData.phone} 
-                          onChange={handleInputChange} 
-                          className="w-full rounded-lg border border-[#383d44] bg-[#2b2e34] px-4 py-2.5 text-sm text-[#ffffff] placeholder-[#7d8590] focus:border-[#d4af37] focus:outline-none focus:ring-1 focus:ring-[#d4af37]" 
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-serif text-[#a09788] uppercase tracking-wider mb-1">City *</label>
-                        <input 
-                          type="text" 
-                          name="city" 
-                          required 
-                          placeholder="e.g. Lahore, Karachi" 
-                          value={formData.city} 
-                          onChange={handleInputChange} 
-                          className="w-full rounded-lg border border-[#383d44] bg-[#2b2e34] px-4 py-2.5 text-sm text-[#ffffff] placeholder-[#7d8590] focus:border-[#d4af37] focus:outline-none focus:ring-1 focus:ring-[#d4af37]" 
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-serif text-[#a09788] uppercase tracking-wider mb-1">Delivery Address *</label>
-                        <textarea 
-                          name="address" 
-                          rows="3" 
-                          required 
-                          placeholder="House No, Street, Area" 
-                          value={formData.address} 
-                          onChange={handleInputChange} 
-                          className="w-full rounded-lg border border-[#383d44] bg-[#2b2e34] px-4 py-2.5 text-sm text-[#ffffff] placeholder-[#7d8590] focus:border-[#d4af37] focus:outline-none focus:ring-1 focus:ring-[#d4af37] resize-none"
-                        ></textarea>
-                      </div>
-                      <div className="pt-2">
-                        <label className="block text-xs font-serif text-[#a09788] uppercase tracking-wider mb-1">Payment Method</label>
-                        <div className="p-3 border border-[#d4af37]/40 rounded-lg bg-[#d4af37]/10 flex items-center justify-between">
-                          <span className="text-sm font-serif text-[#ffffff]">Cash on Delivery (COD)</span>
-                          <span className="text-[10px] bg-[#d4af37] text-black px-2 py-0.5 rounded font-bold uppercase tracking-wider">Selected</span>
-                        </div>
-                      </div>
-                    </form>
-                  )}
-
-                  {/* STEP 3: ORDER SUCCESS SCREEN */}
-                  {step === 'success' && (
-                    <div className="text-center py-10 space-y-4">
-                      <div className="w-16 h-16 bg-[#d4af37]/20 border border-[#d4af37] text-[#d4af37] rounded-full flex items-center justify-center text-3xl font-bold mx-auto">
-                        &check;
-                      </div>
-                      <h3 className="text-2xl font-serif text-[#ffffff]">Thank You!</h3>
-                      <p className="text-[#a09788] text-sm font-light">Your order has been placed successfully.</p>
-                      
-                      <div className="p-4 bg-[#2b2e34] rounded-xl text-left text-xs space-y-1.5 text-[#e0d6c3] border border-[#383d44]">
-                        <p><strong className="text-[#d4af37]">Name:</strong> {formData.name}</p>
-                        <p><strong className="text-[#d4af37]">Phone:</strong> {formData.phone}</p>
-                        <p><strong className="text-[#d4af37]">Address:</strong> {formData.address}, {formData.city}</p>
-                      </div>
-                    </div>
-                  )}
-
-                </div>
-
-                {/* Footer Buttons */}
-                <div className="border-t border-[#2e3238] px-4 py-6 sm:px-6 bg-[#121416]">
-                  {step === 'cart' && (
-                    <>
-                      <div className="flex justify-between text-base font-serif text-[#ffffff]">
-                        <p>Subtotal</p>
-                        <p className="text-lg font-bold text-[#d4af37]">Rs. {subtotal}</p>
-                      </div>
-                      <div className="mt-6 space-y-3">
-                        <button 
-                          type="button" 
-                          disabled={cartItems.length === 0} 
-                          onClick={() => setStep('checkout')} 
-                          className="w-full flex items-center justify-center rounded-lg bg-[#d4af37] px-6 py-3.5 text-sm font-semibold text-black shadow-lg hover:bg-[#c5a059] transition-all duration-300 disabled:opacity-40 disabled:hover:bg-[#d4af37]"
-                        >
-                          Checkout (Rs. {subtotal})
-                        </button>
-                        <div className="flex justify-center text-center text-xs text-[#a09788]">
-                          <p>
-                            or{' '}
-                            <button 
-                              type="button" 
-                              onClick={handleClose} 
-                              className="font-serif text-[#d4af37] hover:underline uppercase tracking-wider"
-                            >
-                              Continue Shopping &rarr;
-                            </button>
-                          </p>
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  {step === 'checkout' && (
-                    <button 
-                      type="submit" 
-                      form="checkout-form" 
-                      disabled={loading}
-                      className="w-full flex items-center justify-center rounded-lg bg-[#d4af37] px-6 py-3.5 text-sm font-semibold text-black shadow-lg hover:bg-[#c5a059] transition-all duration-300 disabled:opacity-50"
-                    >
-                      {loading ? 'Placing Order...' : `Confirm Order (Rs. ${subtotal})`}
-                    </button>
-                  )}
-
-                  {step === 'success' && (
-                    <button 
-                      type="button" 
-                      onClick={handleClose} 
-                      className="w-full bg-[#d4af37] text-black py-3.5 rounded-lg font-semibold text-sm hover:bg-[#c5a059] transition-all duration-300"
-                    >
-                      Continue Shopping
-                    </button>
-                  )}
-                </div>
-
-              </div>
-            </DialogPanel>
-          </div>
+              ))}
+            </div>
+          )}
         </div>
+
+        {/* Footer Actions */}
+        {!orderPlaced && !isCheckingOut && (
+          <div className="pt-4 border-t border-[#2a261e] space-y-3">
+            <div className="flex justify-between items-center text-sm">
+              <span className="font-serif">Subtotal</span>
+              <span className="font-semibold text-[#d4af37]">Rs. {subtotal}</span>
+            </div>
+
+            <button
+              disabled={cartItems.length === 0}
+              onClick={() => setIsCheckingOut(true)}
+              className={`w-full py-3 rounded text-xs font-semibold uppercase tracking-widest transition ${
+                cartItems.length === 0
+                  ? "bg-[#2a261e] text-gray-500 cursor-not-allowed"
+                  : "bg-[#d4af37] text-black hover:bg-[#c5a059]"
+              }`}
+            >
+              Checkout (Rs. {subtotal})
+            </button>
+
+            <div className="text-center pt-1">
+              <button
+                onClick={handleContinueShopping}
+                className="text-[11px] text-[#d4af37] hover:underline uppercase tracking-wider font-serif"
+              >
+                or CONTINUE SHOPPING →
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
-    </Dialog>
+    </div>
   );
 }
