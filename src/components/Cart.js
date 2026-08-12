@@ -18,10 +18,10 @@ export default function Cart({
   // 1. Total Price Calculate
   const subtotal = cartItems.reduce((acc, item) => {
     const price = typeof item.price === "number" ? item.price : parseFloat(item.price) || 0;
-    return acc + price;
+    return acc + (price * (item.quantity || 1));
   }, 0);
 
-  // 2. Navigation Handlers (Fixes non-working buttons)
+  // 2. Navigation Handlers
   const handleClose = () => {
     if (setIsOpen) setIsOpen(false);
     navigate("/");
@@ -32,7 +32,7 @@ export default function Cart({
     navigate("/products");
   };
 
-  // 3. Place Order in Firestore
+  // 3. Place Order in Firestore (Synced with Admin Panel)
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
     if (!customer.name || !customer.phone || !customer.address) {
@@ -43,18 +43,27 @@ export default function Cart({
     setLoading(true);
     try {
       await addDoc(collection(db, "orders"), {
+        name: customer.name,
         customerName: customer.name,
         phone: customer.phone,
         address: customer.address,
-        items: cartItems,
+        items: cartItems.map((item) => ({
+          id: item.id || "",
+          name: item.name || "Perfume",
+          price: item.price || 0,
+          quantity: item.quantity || 1,
+          image: item.image || "",
+        })),
+        total: subtotal,
         totalPrice: subtotal,
-        status: "Pending",
+        status: "PENDING",
         createdAt: serverTimestamp(),
       });
 
       if (setCartItems) setCartItems([]);
       setOrderPlaced(true);
       setIsCheckingOut(false);
+      setCustomer({ name: "", phone: "", address: "" });
     } catch (err) {
       console.error("Order placing error:", err);
       alert("Failed to place order. Try again!");
@@ -157,7 +166,7 @@ export default function Cart({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-1/2 bg-[#d4af37] text-black text-xs font-semibold uppercase py-2.5 rounded hover:bg-[#c5a059] transition"
+                  className="w-1/2 bg-[#d4af37] text-black text-xs font-semibold uppercase py-2.5 rounded hover:bg-[#c5a059] transition disabled:opacity-50"
                 >
                   {loading ? "Placing..." : "Confirm Order"}
                 </button>

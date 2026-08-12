@@ -39,7 +39,7 @@ export default function Navbar({ user, cartCount = 0, onSearchClick }) {
           <Link to="/contact" className="hover:text-[#d4af37] transition">CONTACT</Link>
 
           {isAdmin && (
-            <Link to="/admin" className="text-[#d4af37] font-bold underline">
+            <Link to="/admin" className="hover:text-[#d4af37] transition">
               ADMIN
             </Link>
           )}

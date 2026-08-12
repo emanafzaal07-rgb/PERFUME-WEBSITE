@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import ProductList from "./productList";
-import Cart from "./Cart";
+import ProductList from "../components/ProductList";
+import Cart from "../components/Cart";
 
 const HERO_IMAGE_URL = "https://img.freepik.com/premium-vector/bottle-perfume-with-gold-ribbons-top_889056-186003.jpg";
 

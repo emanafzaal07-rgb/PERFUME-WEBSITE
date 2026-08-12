@@ -4,15 +4,7 @@ import { collection, onSnapshot } from "firebase/firestore";
 
 // Existing Perfume Imports
 import product1 from "../assets/aurum-noir.png"; 
-import product2 from "../assets/chanel.png"; 
-import product3 from "../assets/honey.png"; 
-import product4 from "../assets/vanila.png"; 
 
-// New Bella Vita Imports
-import product5 from "../assets/bella-vita-black.png";
-import product6 from "../assets/bella-vita-blue.png";
-import product7 from "../assets/bella-vita-purple.png";
-import product8 from "../assets/bella-vita-white.png";
 
 // Exact 8 Items Local Array
 const localItemsArray = [ 
@@ -26,77 +18,7 @@ const localItemsArray = [
     image: product1, 
     description: "Pure subtle royal musk scent" 
   }, 
-  { 
-    id: "2", 
-    name: "Aurum Noir", 
-    category: "Poetic Range",
-    price: 4500,
-    originalPrice: 5200,
-    reviews: 120,
-    image: product2, 
-    description: "Long lasting luxury perfume" 
-  }, 
-  { 
-    id: "3", 
-    name: "Chanel",
-    category: "Executive Range",
-    price: 3800,
-    originalPrice: 4500,
-    reviews: 85,
-    image: product3, 
-    description: "Fresh and energetic fragrance" 
-  }, 
-  { 
-    id: "4",
-    name: "Honey",
-    category: "Sensory Range",
-    price: 5200,
-    originalPrice: 6000,
-    reviews: 210,
-    image: product4,
-    description: "Deep, sweet & woody scent" 
-  },
-  { 
-    id: "5",
-    name: "Bella Vita Noir",
-    category: "Poetic Range",
-    price: 4200,
-    originalPrice: 4900,
-    reviews: 142,
-    image: product5,
-    description: "Intense dark aromatic EDP" 
-  },
-  { 
-    id: "6",
-    name: "Bella Vita Ocean",
-    category: "Executive Range",
-    price: 3900,
-    originalPrice: 4600,
-    reviews: 78,
-    image: product6,
-    description: "Refreshing aquatic splash fragrance" 
-  },
-  { 
-    id: "7",
-    name: "Bella Vita Luxury",
-    category: "Sensory Range",
-    price: 4800,
-    originalPrice: 5500,
-    reviews: 164,
-    image: product7,
-    description: "Elegant floral & fruity notes" 
-  },
-  { 
-    id: "8",
-    name: "Bella Vita White",
-    category: "Royal Range",
-    price: 4100,
-    originalPrice: 4800,
-    reviews: 112,
-    image: product8,
-    description: "Pure subtle royal musk scent" 
-  }
-]; 
+];
 
 function ProductList({ searchQuery, addToCart }) {
   const [products, setProducts] = useState(localItemsArray);
