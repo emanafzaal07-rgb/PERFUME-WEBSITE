@@ -34,7 +34,7 @@ export default function Navbar({ user, cartCount = 0, onSearchClick }) {
         {/* 2. Center: Nav Links */}
         <nav className="hidden md:flex items-center gap-8 text-xs font-serif uppercase tracking-widest text-[#b8af9e]">
           <Link to="/" className="hover:text-[#d4af37] transition">HOME</Link>
-          <Link to="/products" className="hover:text-[#d4af37] transition">PRODUCTS</Link>
+          
           <Link to="/collections" className="hover:text-[#d4af37] transition">COLLECTIONS</Link>
           <Link to="/contact" className="hover:text-[#d4af37] transition">CONTACT</Link>
 

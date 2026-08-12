@@ -49,12 +49,6 @@ function Home({
                 SHOP COLLECTION
               </Link>
               
-              <Link 
-                to="/products"
-                className="border border-[#3a3428] text-[#e0d6c3] font-serif text-xs px-7 py-3.5 rounded-full tracking-widest uppercase hover:border-[#d4af37] hover:text-[#d4af37] transition-all duration-300"
-              >
-                EXPLORE OUD
-              </Link>
             </div>
           </div>
 
