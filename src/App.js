@@ -50,8 +50,21 @@ function App() {
   }, []);
 
   const addToCart = (product) => {
-    setCartItems((prevItems) => [...prevItems, product]);
-    setToastMessage(`✓ Added ${product.name || product.title}`);
+    setCartItems((prevItems) => {
+      const existingIndex = prevItems.findIndex(
+        (item) => item.id === product.id && item.selectedVariant === product.selectedVariant
+      );
+
+      if (existingIndex > -1) {
+        const updated = [...prevItems];
+        updated[existingIndex].quantity = (updated[existingIndex].quantity || 1) + (product.quantity || 1);
+        return updated;
+      }
+
+      return [...prevItems, { ...product, quantity: product.quantity || 1 }];
+    });
+
+    setToastMessage(`✓ Added ${product.name || product.title || "Item"} to Cart`);
     setTimeout(() => setToastMessage(""), 2500);
   };
 
@@ -59,6 +72,8 @@ function App() {
     setSelectedProduct(product);
     setIsDetailOpen(true);
   };
+
+  const totalCartCount = cartItems.reduce((total, item) => total + (item.quantity || 1), 0);
 
   return (
     <BrowserRouter>
@@ -78,16 +93,24 @@ function App() {
 
       <Navbar 
         user={user} 
-        cartCount={cartItems.length} 
+        cartCount={totalCartCount} 
         onSearchClick={() => setIsSearchOpen(true)} 
+        onCartClick={() => setIsCartOpen(true)}
       />
 
       {toastMessage && (
-        <div className="fixed top-20 right-4 z-50 bg-[#121212] text-white text-xs px-4 py-2.5 rounded-lg shadow-2xl flex items-center gap-2 border border-[#d4af37]">
+        <div className="fixed top-20 right-4 z-[9999] bg-[#121212] text-white text-xs px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-[#d4af37]">
           <span className="text-[#d4af37] font-bold">✓</span>
           <span>{toastMessage}</span>
         </div>
       )}
+
+      <Cart 
+        cartItems={cartItems} 
+        setCartItems={setCartItems} 
+        isOpen={isCartOpen} 
+        setIsOpen={setIsCartOpen} 
+      />
 
       <Routes>
         <Route 
@@ -103,7 +126,7 @@ function App() {
             />
           } 
         />
-        <Route path="/collections" element={<Collections onViewProduct={handleOpenDetail} />} />
+        <Route path="/collections" element={<Collections onViewProduct={handleOpenDetail} addToCart={addToCart} />} />
         <Route 
           path="/products" 
           element={
