@@ -75,6 +75,18 @@
   border-color: var(--gold);
 }
 
+.auth__forgot {
+  align-self: flex-end;
+  margin-top: -8px;
+  color: rgba(245, 240, 230, 0.55);
+  font-size: 0.78rem;
+  transition: color 0.2s ease;
+}
+
+.auth__forgot:hover {
+  color: var(--gold);
+}
+
 .auth__submit {
   margin-top: 8px;
   background: var(--gold);

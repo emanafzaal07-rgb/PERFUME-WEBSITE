@@ -19,8 +19,17 @@ import Contact from "./pages/Contact";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import ForgotPassword from "./components/ForgotPassword";
 
 import AdminOrders from "./Admin/AdminOrders";
+
+function CartRoute({ setIsCartOpen, ...homeProps }) {
+  useEffect(() => {
+    setIsCartOpen(true);
+  }, [setIsCartOpen]);
+
+  return <Home {...homeProps} setIsCartOpen={setIsCartOpen} />;
+}
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -141,15 +150,18 @@ function App() {
         <Route path="/admin" element={<AdminOrders />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route 
           path="/cart" 
           element={
-            <Cart 
+            <CartRoute 
               cartItems={cartItems} 
               setCartItems={setCartItems} 
-              isOpen={true} 
-              setIsOpen={setIsCartOpen} 
+              addToCart={addToCart}
+              isCartOpen={isCartOpen}
+              setIsCartOpen={setIsCartOpen}
+              onViewProduct={handleOpenDetail}
             />
           } 
         />          

@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import ProductList from "../components/ProductList";
-import Cart from "../components/Cart";
 
 const HERO_IMAGE_URL = "https://img.freepik.com/premium-vector/bottle-perfume-with-gold-ribbons-top_889056-186003.jpg";
 
@@ -72,14 +71,6 @@ function Home({
           <ProductList addToCart={addToCart} />
         </div>
       </section>
-
-      {/* Cart */}
-      <Cart
-        cartItems={cartItems}
-        setCartItems={setCartItems}
-        isOpen={isCartOpen}
-        setIsOpen={setIsCartOpen}
-      />
     </div>
   );
 }
